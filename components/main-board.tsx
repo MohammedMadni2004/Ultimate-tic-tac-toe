@@ -11,6 +11,7 @@ type MainBoardProps = {
   lastClickedCellId: number | null;
   nextActiveBoard: (number | null)[] | null;
   handlePlay: (boardId: number, cellId: number, yourMove: boolean) => void;
+  webSocket: WebSocket|null;
 };
 
 const MainBoard: React.FC<MainBoardProps> = ({

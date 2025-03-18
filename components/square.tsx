@@ -1,9 +1,18 @@
 import React from "react";
-import { View, Pressable } from "react-native";
+import { Pressable, Text } from "react-native";
 import { MotiView } from "moti";
 import tw from "twrnc";
-import XIcon from "@/components/icons/XIcon"; // Replace with actual SVG component
-import CircleIcon from "@/components/icons/CircleIcon"; // Replace with actual SVG component
+// Replace with actual SVG components if available
+// import XIcon from "@/components/icons/XIcon";
+// import CircleIcon from "@/components/icons/CircleIcon";
+
+const XIcon = ({ size = 30 }) => (
+  <Text style={tw`text-xl font-bold text-black`}>&times;</Text>
+);
+
+const CircleIcon = ({ size = 30 }) => (
+  <Text style={tw`text-xl font-bold text-black`}>O</Text>
+);
 
 function Square({
   handlePlay,
@@ -24,19 +33,18 @@ function Square({
   currentPlayerTurn: string;
   globalIndex: number;
 }) {
-  let value;
+  let value = null;
 
   if (cellValue === "X") {
-    value = <XIcon width={30} height={30} />;
+    value = <XIcon />;
   } else if (cellValue === "O") {
-    value = <CircleIcon width={30} height={30} />;
+    value = <CircleIcon />;
   } else if (isActiveSquare) {
-    value =
-      currentPlayerTurn === "X" ? (
-        <XIcon width={20} height={20} style={tw`opacity-60`} />
-      ) : (
-        <CircleIcon width={20} height={20} style={tw`opacity-60`} />
-      );
+    value = currentPlayerTurn === "X" ? (
+      <XIcon size={20} />
+    ) : (
+      <CircleIcon size={20} />
+    );
   }
 
   return (
@@ -50,7 +58,7 @@ function Square({
         disabled={!isActiveSquare}
         onPress={() => handlePlay(boardId, cellId, true)}
         style={[
-          tw`aspect-square w-11/12 h-11/12 rounded-md p-2 md:w-full md:h-full md:p-4`,
+          tw`aspect-square w-11/12 h-11/12 rounded-md p-2 md:w-full md:h-full md:p-4 flex items-center justify-center`,
           isLastClickedSquare
             ? tw`bg-gray-900`
             : isActiveSquare
@@ -65,3 +73,6 @@ function Square({
 }
 
 export default Square;
+
+
+

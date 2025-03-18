@@ -4,6 +4,8 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import tw from "twrnc"
+import { View } from 'react-native-reanimated/lib/typescript/Animated';
 
 export default function HomeScreen() {
   return (
@@ -50,6 +52,7 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
+      <View style={tw`h-20 color`}  > Hello world</View>  
     </ParallaxScrollView>
   );
 }

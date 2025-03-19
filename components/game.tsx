@@ -120,8 +120,6 @@ export default function Game({
           lastClickedCellId={lastClickedCellId}
           handlePlay={handlePlay}
           playerMark={playerMark}
-          moveHistory={moveHistory}
-          currentMove={currentMove}
         />
       </View>
 

@@ -1,6 +1,7 @@
 import { ServerMessageSchema } from "@/utils/server-message-schema";
 import { validateMessage } from "@/utils/validate-message";
 import { useEffect, useRef } from "react";
+import { Alert } from "react-native";
 
 export function useSocket(
   setWaiting: React.Dispatch<React.SetStateAction<boolean | undefined>>,
@@ -59,6 +60,8 @@ export function useSocket(
           break;
 
         case "rematch-declined":
+          setRematchDeclined(true);
+          Alert.alert("Rematch Declined", "Opponent declined the rematch.");
           setRematchDeclined(true);
           break;
       }

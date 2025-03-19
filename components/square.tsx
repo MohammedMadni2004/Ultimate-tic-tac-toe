@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, View, Text } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 import tw from "twrnc";
 
 function Square({
@@ -19,19 +19,34 @@ function Square({
   isLastClickedSquare: boolean;
   currentPlayerTurn: string;
 }) {
+  const getSquareContent = () => {
+    if (cellValue === "X") return { text: "X", style: "text-red-600" };
+    if (cellValue === "O") return { text: "O", style: "text-blue-600" };
+    return { text: "", style: "" };
+  };
+
+  const { text, style } = getSquareContent();
+
   return (
     <TouchableOpacity
-      style={tw`aspect-square bg-gray-200 justify-center items-center ${
-        isLastClickedSquare ? "bg-blue-500" : ""
+      style={tw`w-full h-full justify-center items-center ${
+        isLastClickedSquare
+          ? "bg-blue-200"
+          : isActiveSquare
+          ? "bg-yellow-100"
+          : "bg-white"
       }`}
       disabled={!isActiveSquare}
       onPress={() => handlePlay(boardId, cellId, true)}
+      activeOpacity={isActiveSquare ? 0.6 : 1}
     >
-      <View>
-        <Text style={tw`text-xl`}>
-          {cellValue || (isActiveSquare ? currentPlayerTurn : "")}
-        </Text>
-      </View>
+      <Text
+        style={tw`font-bold ${style ? style : "text-gray-400"} ${
+          text ? "text-xl" : "text-xs"
+        }`}
+      >
+        {text || (isActiveSquare ? "" : "")}
+      </Text>
     </TouchableOpacity>
   );
 }

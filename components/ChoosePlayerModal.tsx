@@ -7,7 +7,7 @@ function ChoosePlayerModal({ socket }: { socket: (message: any) => void }) {
   const [chosenMark, setChosenMark] = useState("");
   const [isVisible, setIsVisible] = useState(true);
 
-  const handleChoose = (mark: string) => {
+  const handleChoose = (mark: 'X'|'O') => {
     setChosenMark(mark);
     socket({ type: "player", player: mark });
     setTimeout(() => setIsVisible(false), 500); 

@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 import Game from "@/components/game";
 import { useSocket } from "@/hooks/useSocket";
 import tw from "twrnc";
@@ -97,35 +104,45 @@ function OnlineGame() {
         <Text style={tw`text-lg text-gray-800`}>
           Please wait while we assign you a player mark...
         </Text>
-        <ChoosePlayerModal socket={ sendMessage} />
+        <ChoosePlayerModal socket={sendMessage} />
       </View>
     );
   }
 
   return (
-    <View style={tw`flex-1`}>
-      <Game
-        currentMove={currentMove}
-        setCurrentMove={setCurrentMove}
-        moveHistory={moveHistory}
-        setMoveHistory={setMoveHistory}
-        handlePlay={handleOnlinePlay}
-        gameResult={gameResult}
-        playerMark={playerMark}
-        onResign={handleResign}
-        onDrawOffer={handleDrawOffer}
-        onRematch={handleRematch}
-        disconnected={disconnected}
-        rematchDeclined={rematchDeclined}
-      />
+    <SafeAreaView style={tw`flex-1`}>
+      <ScrollView
+        contentContainerStyle={tw`flex-grow justify-center items-center py-4`}
+      >
+        <View style={tw`w-full max-w-md px-4`}>
+          <Game
+            currentMove={currentMove}
+            setCurrentMove={setCurrentMove}
+            moveHistory={moveHistory}
+            setMoveHistory={setMoveHistory}
+            handlePlay={handleOnlinePlay}
+            gameResult={gameResult}
+            playerMark={playerMark}
+            onResign={handleResign}
+            onDrawOffer={handleDrawOffer}
+            onRematch={handleRematch}
+            disconnected={disconnected}
+            rematchDeclined={rematchDeclined}
+          />
+        </View>
+      </ScrollView>
       {disconnected && !gameResult && (
-        <View style={tw`absolute inset-0 justify-center items-center`}>
-          <Text style={tw`text-lg text-red-600`}>
-            You have been disconnected from the server.
-          </Text>
+        <View
+          style={tw`absolute inset-0 justify-center items-center bg-black bg-opacity-50`}
+        >
+          <View style={tw`bg-white p-4 rounded-lg`}>
+            <Text style={tw`text-lg text-red-600`}>
+              You have been disconnected from the server.
+            </Text>
+          </View>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 

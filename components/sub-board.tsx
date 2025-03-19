@@ -19,20 +19,25 @@ function SubBoard({
   handlePlay: (boardId: number, cellId: number, yourMove: boolean) => void;
 }) {
   return (
-    <View style={tw`grid grid-cols-3 gap-1`}>
+    <View
+      style={tw`flex-row flex-wrap w-full h-full ${
+        isActiveSubBoard ? "bg-yellow-50" : ""
+      }`}
+    >
       {Array(9)
         .fill(null)
         .map((_, i) => (
-          <Square
-            key={i}
-            handlePlay={handlePlay}
-            cellId={i}
-            cellValue={subBoardState[i]}
-            boardId={boardId}
-            isActiveSquare={isActiveSubBoard && !subBoardState[i]}
-            isLastClickedSquare={lastClickedCellId === i}
-            currentPlayerTurn={currentPlayerTurn}
-          />
+          <View key={i} style={tw`w-1/3 h-1/3 border border-gray-300`}>
+            <Square
+              handlePlay={handlePlay}
+              cellId={i}
+              cellValue={subBoardState[i]}
+              boardId={boardId}
+              isActiveSquare={isActiveSubBoard && !subBoardState[i]}
+              isLastClickedSquare={lastClickedCellId === i}
+              currentPlayerTurn={currentPlayerTurn}
+            />
+          </View>
         ))}
     </View>
   );

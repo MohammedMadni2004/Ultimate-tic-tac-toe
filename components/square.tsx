@@ -2,9 +2,6 @@ import React from "react";
 import { Pressable, Text } from "react-native";
 import { MotiView } from "moti";
 import tw from "twrnc";
-// Replace with actual SVG components if available
-// import XIcon from "@/components/icons/XIcon";
-// import CircleIcon from "@/components/icons/CircleIcon";
 
 const XIcon = ({ size = 30 }) => (
   <Text style={tw`text-xl font-bold text-black`}>&times;</Text>

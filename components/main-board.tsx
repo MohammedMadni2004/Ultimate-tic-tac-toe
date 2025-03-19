@@ -21,6 +21,7 @@ const MainBoard: React.FC<MainBoardProps> = ({
   lastClickedCellId,
   nextActiveBoard,
   handlePlay,
+  webSocket,
 }) => {
   const ANIMATION_DURATION = 0.95;
   const TOTAL_SQUARES = 81;

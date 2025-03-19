@@ -92,7 +92,6 @@ function SubBoard({
         />
       </MotiView>
 
-      {/* Win Animation */}
       {showWinAnimation && subGameResult && (
         <MotiView
           style={[

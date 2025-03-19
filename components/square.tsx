@@ -10,6 +10,7 @@ function Square({
   isActiveSquare,
   isLastClickedSquare,
   currentPlayerTurn,
+  playerMark, 
 }: {
   handlePlay: (boardId: number, cellId: number, yourMove: boolean) => void;
   boardId: number;
@@ -18,10 +19,19 @@ function Square({
   isActiveSquare: boolean;
   isLastClickedSquare: boolean;
   currentPlayerTurn: string;
+  playerMark: string | null;
 }) {
   const getSquareContent = () => {
     if (cellValue === "X") return { text: "X", style: "text-red-600" };
     if (cellValue === "O") return { text: "O", style: "text-blue-600" };
+
+    if (isActiveSquare && playerMark) {
+      return {
+        text: playerMark,
+        style: playerMark === "X" ? "text-red-300" : "text-blue-300",
+      };
+    }
+
     return { text: "", style: "" };
   };
 
@@ -45,7 +55,7 @@ function Square({
           text ? "text-xl" : "text-xs"
         }`}
       >
-        {text || (isActiveSquare ? "" : "")}
+        {text}
       </Text>
     </TouchableOpacity>
   );

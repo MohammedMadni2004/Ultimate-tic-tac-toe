@@ -9,16 +9,17 @@ function MainBoard({
   lastClickedBoardId,
   lastClickedCellId,
   handlePlay,
+  playerMark, 
 }: {
   mainBoardState: (string | null)[][];
   currentPlayerTurn: string;
   lastClickedBoardId: number | null;
   lastClickedCellId: number | null;
   handlePlay: (boardId: number, cellId: number, yourMove: boolean) => void;
+  playerMark: string | null; 
 }) {
-  // Calculate responsive dimensions
   const windowWidth = Dimensions.get("window").width;
-  const boardSize = Math.min(windowWidth - 32, 500); // 16px padding on each side, max 500px
+  const boardSize = Math.min(windowWidth - 32, 500);
 
   return (
     <View
@@ -45,6 +46,7 @@ function MainBoard({
               isActiveSubBoard={true}
               currentPlayerTurn={currentPlayerTurn}
               handlePlay={handlePlay}
+              playerMark={playerMark} 
             />
           </View>
         ))}

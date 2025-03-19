@@ -28,6 +28,12 @@ function OnlineGame() {
     cellId: number,
     yourMove: boolean = true
   ) => {
+
+    if (yourMove && (currentMove % 2 === 0 ? "X" : "O") !== playerMark) {
+      Alert.alert("Not your turn", "Please wait for your opponent to move.");
+      return;
+    }
+
     setCurrentMove((currentMove) => currentMove + 1);
     setMoveHistory((moveHistory) => [...moveHistory, [boardId, cellId]]);
 
@@ -104,7 +110,7 @@ function OnlineGame() {
         <Text style={tw`text-lg text-gray-800`}>
           Please wait while we assign you a player mark...
         </Text>
-        <ChoosePlayerModal socket={sendMessage} />
+        <ChoosePlayerModal socket={sendMessage} setPlayerMark={setPlayerMark} />
       </View>
     );
   }
@@ -115,6 +121,15 @@ function OnlineGame() {
         contentContainerStyle={tw`flex-grow justify-center items-center py-4`}
       >
         <View style={tw`w-full max-w-md px-4`}>
+          <Text style={tw`text-2xl font-bold mb-2 text-center`}>
+            {gameResult
+              ? `Game Over: ${gameResult}`
+              : `${playerMark}'s Turn ${playerMark === "X" ? "(You)" : ""}`}
+            {}
+          </Text>
+          <Text style={tw`text-center text-gray-600 mb-4`}>
+            {playerMark === "X" ? "You are Player X" : "You are Player O"}
+          </Text>
           <Game
             currentMove={currentMove}
             setCurrentMove={setCurrentMove}

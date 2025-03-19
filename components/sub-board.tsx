@@ -10,6 +10,7 @@ function SubBoard({
   isActiveSubBoard,
   currentPlayerTurn,
   handlePlay,
+  playerMark, 
 }: {
   boardId: number;
   subBoardState: (string | null)[];
@@ -17,6 +18,7 @@ function SubBoard({
   isActiveSubBoard: boolean;
   currentPlayerTurn: string;
   handlePlay: (boardId: number, cellId: number, yourMove: boolean) => void;
+  playerMark: string | null; 
 }) {
   return (
     <View
@@ -36,6 +38,7 @@ function SubBoard({
               isActiveSquare={isActiveSubBoard && !subBoardState[i]}
               isLastClickedSquare={lastClickedCellId === i}
               currentPlayerTurn={currentPlayerTurn}
+              playerMark={playerMark} 
             />
           </View>
         ))}

@@ -3,13 +3,20 @@ import { View, Text, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
 import tw from "twrnc";
 
-function ChoosePlayerModal({ socket }: { socket: (message: any) => void }) {
+function ChoosePlayerModal({
+  socket,
+  setPlayerMark,
+}: {
+  socket: (message: any) => void;
+  setPlayerMark: React.Dispatch<React.SetStateAction<"X" | "O" | null>>;
+})  {
   const [chosenMark, setChosenMark] = useState("");
   const [isVisible, setIsVisible] = useState(true);
 
   const handleChoose = (mark: 'X'|'O') => {
     setChosenMark(mark);
     socket({ type: "player", player: mark });
+    setPlayerMark(mark);
     setTimeout(() => setIsVisible(false), 500); 
   };
 

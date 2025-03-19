@@ -28,17 +28,14 @@ export default function Game({
   disconnected: boolean;
   rematchDeclined: boolean;
 }) {
-  // Calculate current game state
   const mainBoardState = Array(9)
     .fill(null)
     .map(() => Array(9).fill(null));
 
-  // Reconstruct the board from move history
   const currentPlayerTurn = currentMove % 2 === 0 ? "X" : "O";
   let lastClickedBoardId = null;
   let lastClickedCellId = null;
 
-  // Apply moves
   for (let i = 1; i <= currentMove && i < moveHistory.length; i++) {
     const [boardId, cellId] = moveHistory[i];
     if (boardId >= 0 && cellId >= 0) {
@@ -50,14 +47,16 @@ export default function Game({
     }
   }
 
+  const isYourTurn = currentPlayerTurn === playerMark;
+
   return (
     <View style={tw`w-full items-center`}>
-      <Text style={tw`text-2xl font-bold mb-2 text-center`}>
+      <Text style={tw`text-lg font-medium mb-2 text-center`}>
         {gameResult
           ? `Game Over: ${gameResult}`
-          : `${currentPlayerTurn}'s Turn ${
-              currentPlayerTurn === playerMark ? "(You)" : ""
-            }`}
+          : isYourTurn
+          ? "Your turn"
+          : "Opponent's turn"}
       </Text>
 
       <View style={tw`w-full mb-4`}>
@@ -67,10 +66,11 @@ export default function Game({
           lastClickedBoardId={lastClickedBoardId}
           lastClickedCellId={lastClickedCellId}
           handlePlay={handlePlay}
+          playerMark={playerMark} 
         />
       </View>
 
-      {/* Game controls */}
+      
       {!disconnected && (
         <View style={tw`flex-row flex-wrap justify-center gap-2 mt-2`}>
           {!gameResult ? (

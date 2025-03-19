@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, Alert } from "react-native";
 import Game from "@/components/game";
 import { useSocket } from "@/hooks/useSocket";
 import tw from "twrnc";
+import ChoosePlayerModal from "@/components/ChoosePlayerModal";
 
 function OnlineGame() {
   const [waiting, setWaiting] = useState<boolean | undefined>();
@@ -96,6 +97,7 @@ function OnlineGame() {
         <Text style={tw`text-lg text-gray-800`}>
           Please wait while we assign you a player mark...
         </Text>
+        <ChoosePlayerModal socket={ sendMessage} />
       </View>
     );
   }

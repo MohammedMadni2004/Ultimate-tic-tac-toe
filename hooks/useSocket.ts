@@ -1,16 +1,15 @@
 import { ServerMessageSchema } from "@/utils/server-message-schema";
 import { validateMessage } from "@/utils/validate-message";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export function useSocket(
   setWaiting: React.Dispatch<React.SetStateAction<boolean | undefined>>,
   setPlayerMark: React.Dispatch<React.SetStateAction<"X" | "O" | null>>,
   setDisconnected: React.Dispatch<React.SetStateAction<boolean>>,
   setGameResult: React.Dispatch<React.SetStateAction<string | null>>,
-  setMessages: React.Dispatch<React.SetStateAction<{text: string, fromSelf: boolean }[]>>,
   handlePlay: (boardId: number, cellId: number, yourMove: boolean) => void,
   resetGame: () => void,
-  setRematchDeclined: React.Dispatch<React.SetStateAction<boolean>>,
+  setRematchDeclined: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   const socketRef = useRef<WebSocket | null>(null);
   const gameIdRef = useRef<string>("");
@@ -35,7 +34,6 @@ export function useSocket(
         case "game": {
           const { moveHistory, currentMove } = msg.game;
           if (moveHistory.length === 1) {
-            // This is a new game (rematch)
             resetGame();
           } else {
             const [boardId, cellId] = moveHistory[currentMove];
@@ -48,63 +46,12 @@ export function useSocket(
           setGameResult(msg.result);
           break;
 
-        case "chat":
-          setMessages((prev) => [...prev, { text: msg.chat, fromSelf: false }]);
-          break;
-
         case "error":
           console.error("Server error:", msg.error);
           break;
 
-        case "draw-offer":
-          toast("Draw Offer", {
-            description: "Your opponent is offering a draw",
-            action: {
-              label: "Accept",
-              onClick: () => {
-                socketRef.current?.send(
-                  JSON.stringify({
-                    type: "draw-offer",
-                    action: "accept",
-                    gameId: gameIdRef.current,
-                  }),
-                );
-              },
-            },
-            duration: 10000,
-          });
-          break;
-
         case "rematch-request":
-          toast("Rematch Request", {
-            description: "Your opponent wants a rematch",
-            action: {
-              label: "Accept",
-              onClick: () => {
-                socketRef.current?.send(
-                  JSON.stringify({
-                    type: "rematch",
-                    action: "accept",
-                    gameId: gameIdRef.current,
-                  }),
-                );
-              },
-            },
-            cancel: {
-              label: "Decline",
-              onClick: () => {
-                socketRef.current?.send(
-                  JSON.stringify({
-                    type: "rematch",
-                    action: "decline",
-                    gameId: gameIdRef.current,
-                  }),
-                );
-              },
-            },
-            duration: 10000,
-          });
-          break;
+        break;
 
         case "rematch-accepted":
           resetGame();
@@ -112,7 +59,6 @@ export function useSocket(
           break;
 
         case "rematch-declined":
-          toast.error("Rematch request declined");
           setRematchDeclined(true);
           break;
       }
@@ -130,9 +76,7 @@ export function useSocket(
   };
 
   useEffect(() => {
-    socketRef.current = new WebSocket(
-      import.meta.env.VITE_WEBSOCKET_SERVER_URL,
-    );
+    socketRef.current = new WebSocket("wss://socket.ammar-codeable.me:8443");
     const socket = socketRef.current;
 
     socket.onmessage = handleMessage;

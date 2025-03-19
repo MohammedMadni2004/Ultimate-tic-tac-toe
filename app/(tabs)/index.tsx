@@ -16,12 +16,9 @@ import ChoosePlayerModal from "@/components/ChoosePlayerModal";
 import getActiveBoards from "@/utils/getActiveBoard";
 import calculateResult from "@/utils/calculate-result";
 
-// Create the main Game component wrapper with key-based remounting
 export default function GameWrapper() {
-  // This key will force the entire component tree to remount when changed
   const [componentKey, setComponentKey] = useState(0);
 
-  // Function to reset everything by changing the key
   const forceReset = () => {
     setComponentKey((prevKey) => prevKey + 1);
   };
@@ -150,9 +147,9 @@ function OnlineGame({ onForceReset }: { onForceReset: () => void }) {
 
   if (waiting === undefined) {
     return (
-      <View style={tw`flex-1 justify-center items-center`}>
+      <View style={tw`flex-1 justify-center items-center bg-blue-50`}>
         <ActivityIndicator size="large" color="#3b82f6" />
-        <Text style={tw`mt-4 text-lg text-gray-800`}>
+        <Text style={tw`mt-4 text-lg text-blue-800 font-medium`}>
           Connecting to server...
         </Text>
       </View>
@@ -161,11 +158,41 @@ function OnlineGame({ onForceReset }: { onForceReset: () => void }) {
 
   if (waiting === true) {
     return (
-      <View style={tw`flex-1 justify-center items-center`}>
-        <ActivityIndicator size="large" color="#3b82f6" />
-        <Text style={tw`mt-4 text-lg text-gray-800`}>
-          Waiting for another player...
-        </Text>
+      <View
+        style={tw`flex-1 justify-center items-center bg-gradient-to-b from-blue-50 to-indigo-100 p-6`}
+      >
+        <View
+          style={tw`bg-white rounded-2xl p-8 shadow-lg w-full max-w-sm items-center`}
+        >
+          <View
+            style={tw`mb-6 w-20 h-20 rounded-full bg-blue-100 justify-center items-center`}
+          >
+            <ActivityIndicator size="large" color="#4f46e5" />
+          </View>
+
+          <Text style={tw`text-2xl font-bold text-blue-800 mb-2 text-center`}>
+            Looking for opponent
+          </Text>
+
+          <Text style={tw`text-base text-gray-600 mb-6 text-center`}>
+            We're matching you with another player. This should only take a
+            moment...
+          </Text>
+
+          <View style={tw`flex-row justify-center items-center`}>
+            <View
+              style={tw`w-3 h-3 rounded-full bg-blue-400 mx-1 animate-pulse`}
+            ></View>
+            <View
+              style={tw`w-3 h-3 rounded-full bg-blue-500 mx-1 animate-pulse`}
+            ></View>
+            <View
+              style={tw`w-3 h-3 rounded-full bg-blue-600 mx-1 animate-pulse`}
+            ></View>
+          </View>
+        </View>
+
+        <Text style={tw`mt-8 text-sm text-blue-700`}>Ultimate Tic-Tac-Toe</Text>
       </View>
     );
   }

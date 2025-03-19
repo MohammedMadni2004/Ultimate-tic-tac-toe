@@ -2,6 +2,8 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import MainBoard from "./main-board";
 import tw from "twrnc";
+import getActiveBoards from "@/utils/getActiveBoard";
+import calculateResult from "@/utils/calculate-result";
 
 export default function Game({
   currentMove,
@@ -49,6 +51,49 @@ export default function Game({
 
   const isYourTurn = currentPlayerTurn === playerMark;
 
+  // Calculate active boards for next move
+  const reducedMainBoardState = mainBoardState.map((subBoard) =>
+    calculateResult(subBoard)
+  );
+
+  const isGameInactive = Boolean(gameResult);
+  const activeBoards = getActiveBoards(
+    isGameInactive,
+    reducedMainBoardState,
+    moveHistory,
+    currentMove,
+    isYourTurn
+  );
+
+  // Create a user-friendly message about where to play next
+  const getNextMoveMessage = () => {
+    if (!isYourTurn) return "Waiting for opponent's move...";
+    if (gameResult) return "Game over";
+
+    if (!activeBoards || activeBoards.length === 0) {
+      return "No valid moves available";
+    }
+
+    if (activeBoards.length > 1) {
+      return "You can play in any highlighted sub-board";
+    }
+
+    // Board positions description
+    const boardPositions = [
+      "top-left",
+      "top-center",
+      "top-right",
+      "middle-left",
+      "center",
+      "middle-right",
+      "bottom-left",
+      "bottom-center",
+      "bottom-right",
+    ];
+
+    return `Play in the ${boardPositions[activeBoards[0]]} sub-board`;
+  };
+
   return (
     <View style={tw`w-full items-center`}>
       <Text style={tw`text-lg font-medium mb-2 text-center`}>
@@ -59,6 +104,14 @@ export default function Game({
           : "Opponent's turn"}
       </Text>
 
+      {isYourTurn && !gameResult && (
+        <View style={tw`mb-3 p-2 bg-yellow-100 rounded-md w-full`}>
+          <Text style={tw`text-center font-medium text-yellow-800`}>
+            {getNextMoveMessage()}
+          </Text>
+        </View>
+      )}
+
       <View style={tw`w-full mb-4`}>
         <MainBoard
           mainBoardState={mainBoardState}
@@ -66,11 +119,12 @@ export default function Game({
           lastClickedBoardId={lastClickedBoardId}
           lastClickedCellId={lastClickedCellId}
           handlePlay={handlePlay}
-          playerMark={playerMark} 
+          playerMark={playerMark}
+          moveHistory={moveHistory}
+          currentMove={currentMove}
         />
       </View>
 
-      
       {!disconnected && (
         <View style={tw`flex-row flex-wrap justify-center gap-2 mt-2`}>
           {!gameResult ? (

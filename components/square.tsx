@@ -28,13 +28,20 @@ function Square({
   const isClickable = isActiveSquare && isUserTurn && !cellValue;
 
   const getSquareContent = () => {
-    if (cellValue === "X") return { text: "X", style: "text-red-600" };
-    if (cellValue === "O") return { text: "O", style: "text-blue-600" };
+    // For already placed marks, use bold colors
+    if (cellValue === "X")
+      return { text: "X", style: "text-red-700 font-extrabold" };
+    if (cellValue === "O")
+      return { text: "O", style: "text-blue-700 font-extrabold" };
 
-    if (isActiveSquare && playerMark && isUserTurn) {
+    // For preview marks (when hovering over valid squares), use lighter colors
+    if (isClickable && playerMark) {
       return {
         text: playerMark,
-        style: playerMark === "X" ? "text-red-300" : "text-blue-300",
+        style:
+          playerMark === "X"
+            ? "text-red-300 opacity-50"
+            : "text-blue-300 opacity-50",
       };
     }
 
@@ -43,22 +50,24 @@ function Square({
 
   const { text, style } = getSquareContent();
 
+  // Enhanced background colors for better visibility
+  const getBgColor = () => {
+    if (isLastClickedSquare) return "bg-indigo-200"; // Last move
+    if (isClickable) return "bg-yellow-200"; // Valid next move
+    if (isActiveSquare) return "bg-yellow-50"; // Active but not clickable
+    return "bg-white"; // Inactive
+  };
+
   return (
     <TouchableOpacity
-      style={tw`w-full h-full justify-center items-center ${
-        isLastClickedSquare
-          ? "bg-blue-200"
-          : isClickable
-          ? "bg-yellow-100"
-          : "bg-white"
-      }`}
+      style={tw`w-full h-full justify-center items-center ${getBgColor()}`}
       disabled={!isClickable}
       onPress={() => handlePlay(boardId, cellId, true)}
       activeOpacity={isClickable ? 0.6 : 1}
     >
       <Text
-        style={tw`font-bold ${style ? style : "text-gray-400"} ${
-          text ? "text-xl" : "text-xs"
+        style={tw`${style ? style : "text-gray-400"} ${
+          text ? "text-2xl" : "text-xs"
         }`}
       >
         {text}

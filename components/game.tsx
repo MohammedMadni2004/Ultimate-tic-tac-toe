@@ -12,8 +12,8 @@ export default function Game({
   gameResult,
   playerMark,
   onResign,
-  onDrawOffer,
   onRematch,
+  onFindNewOpponent,
   disconnected,
   rematchDeclined,
 }: {
@@ -25,8 +25,8 @@ export default function Game({
   gameResult: string | null;
   playerMark: "X" | "O" | null;
   onResign: () => void;
-  onDrawOffer: () => void;
   onRematch: () => void;
+  onFindNewOpponent: () => void;
   disconnected: boolean;
   rematchDeclined: boolean;
 }) {
@@ -51,7 +51,6 @@ export default function Game({
 
   const isYourTurn = currentPlayerTurn === playerMark;
 
-  // Calculate active boards for next move
   const reducedMainBoardState = mainBoardState.map((subBoard) =>
     calculateResult(subBoard)
   );
@@ -65,7 +64,6 @@ export default function Game({
     isYourTurn
   );
 
-  // Create a user-friendly message about where to play next
   const getNextMoveMessage = () => {
     if (!isYourTurn) return "Waiting for opponent's move...";
     if (gameResult) return "Game over";
@@ -78,7 +76,6 @@ export default function Game({
       return "You can play in any highlighted sub-board";
     }
 
-    // Board positions description
     const boardPositions = [
       "top-left",
       "top-center",
@@ -133,25 +130,27 @@ export default function Game({
               >
                 <Text style={tw`text-white font-bold`}>Resign</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={tw`bg-gray-500 px-3 py-2 rounded-md`}
-                onPress={onDrawOffer}
-              >
-                <Text style={tw`text-white font-bold`}>Offer Draw</Text>
-              </TouchableOpacity>
             </>
           ) : (
-            <TouchableOpacity
-              style={tw`bg-blue-500 px-3 py-2 rounded-md ${
-                rematchDeclined ? "opacity-50" : ""
-              }`}
-              onPress={onRematch}
-              disabled={rematchDeclined}
-            >
-              <Text style={tw`text-white font-bold`}>
-                {rematchDeclined ? "Rematch Declined" : "Request Rematch"}
-              </Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={tw`bg-blue-500 px-3 py-2 rounded-md ${
+                  rematchDeclined ? "opacity-50" : ""
+                }`}
+                onPress={onRematch}
+                disabled={rematchDeclined}
+              >
+                <Text style={tw`text-white font-bold`}>
+                  {rematchDeclined ? "Rematch Declined" : "Request Rematch"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={tw`bg-green-500 px-3 py-2 rounded-md`}
+                onPress={onFindNewOpponent}
+              >
+                <Text style={tw`text-white font-bold`}>Find New Opponent</Text>
+              </TouchableOpacity>
+            </>
           )}
         </View>
       )}

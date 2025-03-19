@@ -6,6 +6,8 @@ import {
   Alert,
   SafeAreaView,
   ScrollView,
+  Modal,
+  TouchableOpacity,
 } from "react-native";
 import Game from "@/components/game";
 import { useSocket } from "@/hooks/useSocket";
@@ -24,18 +26,17 @@ function OnlineGame() {
   ]);
   const [gameResult, setGameResult] = useState<string | null>(null);
   const [rematchDeclined, setRematchDeclined] = useState(false);
+  const [incomingRematchRequest, setIncomingRematchRequest] = useState(false);
 
   const handleOnlinePlay = (
     boardId: number,
     cellId: number,
     yourMove: boolean = true
   ) => {
-    // Don't show alert, just return if it's not the player's turn
     if (yourMove && (currentMove % 2 === 0 ? "X" : "O") !== playerMark) {
       return;
     }
 
-    // Check if the move is to a valid board
     if (yourMove) {
       const mainBoardState = Array(9)
         .fill(null)
@@ -63,7 +64,6 @@ function OnlineGame() {
         isCurrentPlayerTurn
       );
 
-      // Silently reject invalid moves
       if (activeBoards && !activeBoards.includes(boardId)) {
         return;
       }
@@ -101,10 +101,32 @@ function OnlineGame() {
     Alert.alert("Rematch Request", "Rematch request sent to opponent.");
   };
 
+  const handleIncomingRematchRequest = (accept: boolean) => {
+    sendMessage({
+      type: accept  ? "rematch-accepted":"rematch-declined",
+      
+    });
+
+    setIncomingRematchRequest(false);
+
+    if (accept) {
+      resetGame();
+      
+    }
+  };
+
+  const findNewOpponent = () => {
+    resetGame();
+    setRematchDeclined(false);
+    setWaiting(true);
+    sendMessage({ type: "init" });
+  };
+
   const resetGame = () => {
     setCurrentMove(0);
     setMoveHistory([[-1, -1]]);
     setGameResult(null);
+    setRematchDeclined(false);
   };
 
   const { socket, sendMessage } = useSocket(
@@ -114,7 +136,8 @@ function OnlineGame() {
     setGameResult,
     handleOnlinePlay,
     resetGame,
-    setRematchDeclined
+    setRematchDeclined,
+    setIncomingRematchRequest
   );
 
   if (waiting === undefined) {
@@ -174,13 +197,44 @@ function OnlineGame() {
             gameResult={gameResult}
             playerMark={playerMark}
             onResign={handleResign}
-            onDrawOffer={handleDrawOffer}
             onRematch={handleRematch}
+            onFindNewOpponent={findNewOpponent}
             disconnected={disconnected}
             rematchDeclined={rematchDeclined}
           />
         </View>
       </ScrollView>
+
+      <Modal
+        visible={incomingRematchRequest}
+        transparent={true}
+        animationType="fade"
+      >
+        <View
+          style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}
+        >
+          <View style={tw`bg-white p-4 rounded-lg w-4/5 max-w-md`}>
+            <Text style={tw`text-lg font-medium mb-4 text-center`}>
+              Your opponent wants a rematch
+            </Text>
+            <View style={tw`flex-row justify-around`}>
+              <TouchableOpacity
+                style={tw`bg-red-500 px-4 py-2 rounded-md`}
+                onPress={() => handleIncomingRematchRequest(false)}
+              >
+                <Text style={tw`text-white font-bold`}>Decline</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={tw`bg-green-500 px-4 py-2 rounded-md`}
+                onPress={() => handleIncomingRematchRequest(true)}
+              >
+                <Text style={tw`text-white font-bold`}>Accept</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {disconnected && !gameResult && (
         <View
           style={tw`absolute inset-0 justify-center items-center bg-black bg-opacity-50`}

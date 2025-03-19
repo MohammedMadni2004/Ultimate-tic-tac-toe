@@ -10,7 +10,8 @@ export function useSocket(
   setGameResult: React.Dispatch<React.SetStateAction<string | null>>,
   handlePlay: (boardId: number, cellId: number, yourMove: boolean) => void,
   resetGame: () => void,
-  setRematchDeclined: React.Dispatch<React.SetStateAction<boolean>>
+  setRematchDeclined: React.Dispatch<React.SetStateAction<boolean>>,
+  setIncomingRematchRequest: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   const socketRef = useRef<WebSocket | null>(null);
   const gameIdRef = useRef<string>("");
@@ -52,7 +53,8 @@ export function useSocket(
           break;
 
         case "rematch-request":
-        break;
+          setIncomingRematchRequest(true);
+          break;
 
         case "rematch-accepted":
           resetGame();
@@ -62,7 +64,6 @@ export function useSocket(
         case "rematch-declined":
           setRematchDeclined(true);
           Alert.alert("Rematch Declined", "Opponent declined the rematch.");
-          setRematchDeclined(true);
           break;
       }
     } catch (error) {

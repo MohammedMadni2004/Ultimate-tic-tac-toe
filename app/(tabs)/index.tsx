@@ -103,8 +103,8 @@ function OnlineGame() {
 
   const handleIncomingRematchRequest = (accept: boolean) => {
     sendMessage({
-      type: accept  ? "rematch-accepted":"rematch-declined",
-      
+      type: "rematch",
+      action: accept ? "accept" : "decline",
     });
 
     setIncomingRematchRequest(false);

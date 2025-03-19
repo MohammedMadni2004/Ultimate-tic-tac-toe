@@ -11,6 +11,8 @@ import Game from "@/components/game";
 import { useSocket } from "@/hooks/useSocket";
 import tw from "twrnc";
 import ChoosePlayerModal from "@/components/ChoosePlayerModal";
+import getActiveBoards from "@/utils/getActiveBoard";
+import calculateResult from "@/utils/calculate-result";
 
 function OnlineGame() {
   const [waiting, setWaiting] = useState<boolean | undefined>();
@@ -28,10 +30,43 @@ function OnlineGame() {
     cellId: number,
     yourMove: boolean = true
   ) => {
-
+    // Don't show alert, just return if it's not the player's turn
     if (yourMove && (currentMove % 2 === 0 ? "X" : "O") !== playerMark) {
-      Alert.alert("Not your turn", "Please wait for your opponent to move.");
       return;
+    }
+
+    // Check if the move is to a valid board
+    if (yourMove) {
+      const mainBoardState = Array(9)
+        .fill(null)
+        .map(() => Array(9).fill(null));
+
+      for (let i = 1; i < moveHistory.length && i <= currentMove; i++) {
+        const [bId, cId] = moveHistory[i];
+        if (bId >= 0 && cId >= 0) {
+          mainBoardState[bId][cId] = i % 2 === 1 ? "X" : "O";
+        }
+      }
+
+      const reducedMainBoardState = mainBoardState.map((subBoard) =>
+        calculateResult(subBoard)
+      );
+
+      const isGameInactive = Boolean(gameResult);
+      const isCurrentPlayerTurn = true;
+
+      const activeBoards = getActiveBoards(
+        isGameInactive,
+        reducedMainBoardState,
+        moveHistory,
+        currentMove,
+        isCurrentPlayerTurn
+      );
+
+      // Silently reject invalid moves
+      if (activeBoards && !activeBoards.includes(boardId)) {
+        return;
+      }
     }
 
     setCurrentMove((currentMove) => currentMove + 1);

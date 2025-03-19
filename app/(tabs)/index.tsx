@@ -16,7 +16,20 @@ import ChoosePlayerModal from "@/components/ChoosePlayerModal";
 import getActiveBoards from "@/utils/getActiveBoard";
 import calculateResult from "@/utils/calculate-result";
 
-function OnlineGame() {
+// Create the main Game component wrapper with key-based remounting
+export default function GameWrapper() {
+  // This key will force the entire component tree to remount when changed
+  const [componentKey, setComponentKey] = useState(0);
+
+  // Function to reset everything by changing the key
+  const forceReset = () => {
+    setComponentKey((prevKey) => prevKey + 1);
+  };
+
+  return <OnlineGame key={componentKey} onForceReset={forceReset} />;
+}
+
+function OnlineGame({ onForceReset }: { onForceReset: () => void }) {
   const [waiting, setWaiting] = useState<boolean | undefined>();
   const [disconnected, setDisconnected] = useState(false);
   const [playerMark, setPlayerMark] = useState<"X" | "O" | null>(null);
@@ -103,23 +116,18 @@ function OnlineGame() {
 
   const handleIncomingRematchRequest = (accept: boolean) => {
     sendMessage({
-      type: "rematch",
-      action: accept ? "accept" : "decline",
+      type: accept ? "rematch-accepted" : "rematch-declined",
     });
 
     setIncomingRematchRequest(false);
 
     if (accept) {
       resetGame();
-      
     }
   };
 
   const findNewOpponent = () => {
-    resetGame();
-    setRematchDeclined(false);
-    setWaiting(true);
-    sendMessage({ type: "init" });
+    onForceReset();
   };
 
   const resetGame = () => {
@@ -249,5 +257,3 @@ function OnlineGame() {
     </SafeAreaView>
   );
 }
-
-export default OnlineGame;
